@@ -1,0 +1,57 @@
+════════════════════════════════════════════════════════════
+  SUBIR NO GITHUB — portfolio Gustavo Gurevich
+════════════════════════════════════════════════════════════
+
+O QUE TEM AQUI
+
+  index.html    a página
+  style.css     todo o visual
+  script.js     scroll, cliques, ES/EN, fachada Camaleão
+  favicon.svg   o iconezinho da aba do navegador
+  imagens/      as 73 fotos, vídeos e logos
+
+Tudo o que o site precisa está nesta pasta. Nada mais.
+
+
+COMO SUBIR (leva 2 minutos)
+
+  1. Abra  github.com/gustavogurevich-glitch/PortfolioGustavoGurevich
+
+  2. Clique em  "Add file"  →  "Upload files"
+
+  3. Nesta pasta aqui: Cmd + A  (seleciona tudo)
+     e arraste para a área de upload do GitHub.
+     Pode arrastar a pasta "imagens" junto — ele entende.
+
+  4. Lá embaixo, escreva algo em "Commit changes"
+     (ex.: "site v13")  e clique em  "Commit changes".
+
+  Pronto. Em ~1 minuto o site está no ar.
+
+
+LIGAR O SITE (só na primeira vez)
+
+  No repositório:  Settings  →  Pages
+  Source:   Deploy from a branch
+  Branch:   main      Pasta:  / (root)
+  Save.
+
+  O endereço fica:
+  https://gustavogurevich-glitch.github.io/PortfolioGustavoGurevich/
+
+
+QUANDO EU MUDAR ALGUMA COISA
+
+  Eu atualizo os arquivos desta pasta.
+  Você repete os passos 1 a 4. O GitHub substitui o que mudou.
+
+  Dica: pode arrastar tudo de novo sem medo — arquivos iguais
+  ele ignora, arquivos diferentes ele atualiza.
+
+
+PARA VER ANTES DE SUBIR
+
+  Dois cliques em index.html abre no navegador.
+  (Os vídeos podem não tocar assim; no ar funcionam.)
+
+════════════════════════════════════════════════════════════

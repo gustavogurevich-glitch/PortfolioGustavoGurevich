@@ -14,18 +14,69 @@ function setLang(l){ LANG=l; document.documentElement.lang=l;
     var v=e.getAttribute('data-'+l); if(v===null) v=e.getAttribute('data-es');
     e.innerHTML=v; });
   $$('[data-lang]').forEach(function(b){ b.setAttribute('aria-pressed',String(b.dataset.lang===l)); });
-  if(!md.hidden) fillMd(mdKey); }
+  if(md && !md.hidden) fillMd(mdKey); }
 $$('[data-lang]').forEach(function(b){ b.addEventListener('click',function(){ setLang(b.dataset.lang); }); });
 (function(){ var l=null;
   try{ l=localStorage.getItem('gg-lang'); }catch(_){}
   if(l==='es'||l==='en'||l==='pt') setLang(l);
 })();
 
+/* ── vídeos: autoplay quando o navegador deixa; imagem parada quando não deixa ── */
+(function(){
+  var vids=$$('video');
+  function showImg(v){
+    if(v._img) return;
+    var p=v.getAttribute('poster'); if(!p) return;
+    var i=document.createElement('img');
+    i.src=p; i.alt=''; i.className='vfb'; i.setAttribute('aria-hidden','true');
+    i.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+    if(v.parentNode) v.parentNode.insertBefore(i,v);
+    v.style.display='none';
+    v._img=i;
+  }
+  function hideImg(v){ if(v._img){ if(v._img.parentNode) v._img.parentNode.removeChild(v._img); v._img=null; v.style.display=''; } }
+  function tryPlay(v){
+    try{
+      v.muted=true; v.defaultMuted=true; v.playsInline=true; v.controls=false;
+      var pr=v.play();
+      if(pr && pr.then) pr.then(function(){ hideImg(v); }).catch(function(){ showImg(v); });
+    }catch(_){ showImg(v); }
+  }
+  vids.forEach(function(v){
+    v.removeAttribute('controls');
+    v.setAttribute('playsinline',''); v.setAttribute('webkit-playsinline','');
+    tryPlay(v);
+    v.addEventListener('loadeddata',function(){ tryPlay(v); });
+    v.addEventListener('playing',function(){ hideImg(v); });
+    v.addEventListener('timeupdate',function(){ if(v.currentTime>0) hideImg(v); });
+    v.addEventListener('error',function(){ showImg(v); });
+    v._check=function(){
+      if(document.hidden) return;
+      var t0=v.currentTime;
+      setTimeout(function(){
+        if(document.hidden) return;
+        if(v.paused || v.currentTime===t0) showImg(v);
+      }, 1200);
+    };
+    setTimeout(v._check, 2800);
+  });
+  function kickAll(){ vids.forEach(tryPlay); }
+  ['pointerdown','touchstart','keydown','scroll','wheel'].forEach(function(ev){
+    addEventListener(ev, kickAll, {passive:true});
+  });
+  document.addEventListener('visibilitychange',function(){
+    if(!document.hidden){ kickAll(); setTimeout(function(){ vids.forEach(function(v){ if(v._check) v._check(); }); }, 2200); }
+  });
+  addEventListener('pageshow', kickAll);
+  setTimeout(kickAll,700);
+})();
+
 /* ── reveal + counters ── */
 function countUp(el){ var to=+el.dataset.count,pre=el.dataset.pre||'',suf=el.dataset.suf||'';
   if(RM){ el.textContent=pre+to+suf; return; }
+  var dur=+el.dataset.dur||1300;
   var t0=performance.now();
-  (function s(t){ var p=cl((t-t0)/1300,0,1),e=1-Math.pow(1-p,3);
+  (function s(t){ var p=cl((t-t0)/dur,0,1),e=1-Math.pow(1-p,3);
     el.textContent=pre+Math.round(to*e)+suf; if(p<1) requestAnimationFrame(s); })(t0); }
 var io=new IntersectionObserver(function(en){ en.forEach(function(e){ if(!e.isIntersecting) return;
   e.target.classList.add('go'); io.unobserve(e.target); }); },{rootMargin:'0px 0px -8% 0px',threshold:.1});
@@ -115,16 +166,32 @@ stg.addEventListener('click',function(){ goF(fi+1); });
 var md=$('#md'), mdKey='cert';
 var DOC={
  cert:{t:'Certified Digital Marketing Professional',k:{es:'Credencial',en:'Credential',pt:'Credencial'},img:'doc-cert.jpg',
-   rows:[['Digital Marketing Institute','—'],['Graduate No.','BR-OPM275884'],['Syllabus','Version 9.0'],['Fecha / Date','1 Dec 2024']]},
- diploma:{t:'Comunicación Social — Publicidad y Propaganda',k:{es:'Diploma',en:'Degree',pt:'Diploma'},img:'doc-diploma.jpg',
-   rows:[['ESPM','São Paulo'],['Grado / Degree','Bacharel'],['Carga horaria','3.564 horas-aula'],['Colación / Graduation','29 · 08 · 2025']]},
+   rows:[['Digital Marketing Institute','—'],
+         [{es:'N.º de graduado',en:'Graduate No.',pt:'N.º de formado'},'BR-OPM275884'],
+         [{es:'Temario',en:'Syllabus',pt:'Ementa'},'Version 9.0'],
+         [{es:'Fecha',en:'Date',pt:'Data'},'01 · 12 · 2024']]},
+ diploma:{t:{es:'Comunicación Social — Publicidad y Propaganda',en:'Social Communication — Advertising',pt:'Comunicação Social — Publicidade e Propaganda'},
+   k:{es:'Diploma',en:'Degree',pt:'Diploma'},img:'doc-diploma.jpg',
+   rows:[['ESPM','São Paulo'],
+         [{es:'Grado',en:'Degree',pt:'Grau'},{es:'Bachiller',en:'Bachelor',pt:'Bacharel'}],
+         [{es:'Carga horaria',en:'Class hours',pt:'Carga horária'},'3.564'],
+         [{es:'Colación',en:'Graduation',pt:'Colação'},'29 · 08 · 2025']]},
  pdf:{t:'Portfolio 2026 — Gustavo Gurevich',k:{es:'Documento',en:'Document',pt:'Documento'},
-   rows:[['PDF','17 páginas'],['Idioma / Language','Español'],['—','05_SOBRE/documentos/']]},
+   rows:[['PDF',{es:'17 páginas',en:'17 pages',pt:'17 páginas'}],
+         [{es:'Idioma',en:'Language',pt:'Idioma'},{es:'Español',en:'Spanish',pt:'Espanhol'}],
+         [{es:'Tamaño',en:'Size',pt:'Tamanho'},'3,3 MB']],
+   links:[{u:'portfolio-gg.pdf',dl:1,l:{es:'Descargar el portfolio',en:'Download the portfolio',pt:'Baixar o portfólio'}}]},
  praum:{t:'30PRAUM',k:{es:'Producción comercial',en:'Commercial production',pt:'Produção comercial'},
-   rows:[['Videoclipe','Grabado en Cetenco Plaza'],['Visualizaciones / Views','+5.000.000'],['Locación / Location','Helipuerto · esplanada · fachada']]}};
+   rows:[[{es:'Locación',en:'Location',pt:'Locação'},{es:'Helipuerto · esplanada · fachada',en:'Heliport · esplanade · façade',pt:'Heliponto · esplanada · fachada'}],
+         [{es:'Visualizaciones',en:'Views',pt:'Visualizações'},'+5.000.000']],
+   links:[{u:'https://youtu.be/fcgAQJMCoi0',l:{es:'Autobahn — ver en YouTube',en:'Autobahn — watch on YouTube',pt:'Autobahn — ver no YouTube'}},
+          {u:'https://youtu.be/uTO7Dl2SE3g',l:{es:'Alterado — ver en YouTube',en:'Alterado — watch on YouTube',pt:'Alterado — ver no YouTube'}}]}};
+function tr(v){ return (v&&typeof v==='object') ? (v[LANG]||v.es) : v; }
 function fillMd(k){ var d=DOC[k]; mdKey=k;
-  $('#mdT').textContent=d.t; $('#mdK').textContent=d.k[LANG]||d.k.es;
-  var rows=d.rows.map(function(r){ return '<div class="row"><div class="k">'+r[0]+'</div><div class="v">'+r[1]+'</div></div>'; }).join('');
+  $('#mdT').textContent=tr(d.t); $('#mdK').textContent=tr(d.k);
+  var rows=d.rows.map(function(r){ return '<div class="row"><div class="k">'+tr(r[0])+'</div><div class="v">'+tr(r[1])+'</div></div>'; }).join('');
+  if(d.links) rows+='<div class="mdlk">'+d.links.map(function(x){
+     return '<a href="'+x.u+'"'+(x.dl?' download':' target="_blank" rel="noopener"')+'>'+tr(x.l)+'<i>'+(x.dl?'\u2193':'\u2197')+'</i></a>'; }).join('')+'</div>';
   $('#mdD').innerHTML=rows;
   var sc=$('#mdScan');
   if(d.img){ sc.hidden=false; $('img',sc).src=d.img; } else { sc.hidden=true; $('img',sc).removeAttribute('src'); } }
@@ -162,10 +229,26 @@ addEventListener('keydown',function(e){ if(e.key==='Escape'&&menu.classList.cont
 var hd=$('#hd'), pgb=$('#pg'), navA=$$('#hd nav a[href^="#"]'),
     tg=navA.map(function(a){ return $(a.getAttribute('href')); }),
     darks=$$('.dark,#desc,#moras'),
-    heroWrap=$('#heroWrap'), heroVid=$('#heroVid'), heroTxt=$('#heroTxt'), heroCue=$('#heroCue'), heroOver=$('#heroOver'),
+    heroWrap=$('#heroWrap'), heroVid=$('#heroVid'), heroTxt=$('#heroTxt'), heroCue=$('#heroCue'), heroCue2=$('#heroCue2'), heroOver=$('#heroOver'),
     desc=$('#desc'), sh=$('#desc .sh'), says=$$('#desc .say'), fls=$$('#desc .fl div');
 function pv(el){ var r=el.getBoundingClientRect(); return cl((-r.top)/((el.offsetHeight-innerHeight)||1),0,1); }
 function ease(t){ return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
+
+var _gap=null;
+function heroGap(){
+  if(_gap) return _gap;
+  var lead=$('#heroTxt .lead'), facts=$('#heroTxt .facts'),
+      st=heroWrap.firstElementChild, Hs=st?st.offsetHeight:innerHeight,
+      folga=14;
+  var top = lead ? (lead.offsetTop+lead.offsetHeight+folga) : Hs*0.30;
+  var bot = facts ? (facts.offsetTop-folga) : Hs*0.72;
+  var h = bot-top;
+  if(h < Hs*0.22){ h = Hs*0.22; top = (Hs-h)/2; }
+  _gap={t:top,h:h};
+  return _gap;
+}
+addEventListener('resize',function(){ _gap=null; },{passive:true});
+addEventListener('orientationchange',function(){ _gap=null; });
 
 function tick(){
   var y=scrollY,H=innerHeight,doc=document.documentElement.scrollHeight-H;
@@ -187,11 +270,22 @@ function tick(){
   if(hr.top<H && hr.bottom>0){
     var p=ease(cl(pv(heroWrap)/.86,0,1));
     var mob=innerWidth<860;
-    var wS=mob?0.84:0.36, hS=mob?0.30:0.42;
-    var w=(wS+(1-wS)*p)*100, h=(hS+(1-hS)*p)*100;
-    heroVid.style.width=w.toFixed(2)+'%'; heroVid.style.height=h.toFixed(2)+'%';
-    var ox=(mob?0:36)*(1-p), oy=(mob?18:12)*(1-p);
-    heroVid.style.transform='translate('+ox.toFixed(2)+'%,'+oy.toFixed(2)+'%)';
+    if(mob){
+      /* no celular o vídeo ocupa exatamente a folga entre o texto de cima e os dados de baixo */
+      var g=heroGap(), Hs=heroWrap.firstElementChild.offsetHeight||H;
+      var h0=(g.h/Hs)*100, t0=(g.t/Hs)*100, w0=86, l0=7;
+      heroVid.style.width=(w0+(100-w0)*p).toFixed(2)+'%';
+      heroVid.style.height=(h0+(100-h0)*p).toFixed(2)+'%';
+      heroVid.style.left=(l0*(1-p)).toFixed(2)+'%';
+      heroVid.style.top=(t0*(1-p)).toFixed(2)+'%';
+      heroVid.style.transform='none';
+    } else {
+      var wS=0.36, hS=0.42;
+      heroVid.style.left=''; heroVid.style.top='';
+      heroVid.style.width=((wS+(1-wS)*p)*100).toFixed(2)+'%';
+      heroVid.style.height=((hS+(1-hS)*p)*100).toFixed(2)+'%';
+      heroVid.style.transform='translate('+(36*(1-p)).toFixed(2)+'%,'+(12*(1-p)).toFixed(2)+'%)';
+    }
     heroVid.style.borderRadius=(3*(1-p)).toFixed(1)+'px';
     heroVid.style.boxShadow='0 '+(30*(1-p)).toFixed(0)+'px '+(90*(1-p)).toFixed(0)+'px rgba(14,14,13,'+(0.14*(1-p)).toFixed(3)+')';
     heroTxt.style.opacity=cl(1-p*1.9,0,1);

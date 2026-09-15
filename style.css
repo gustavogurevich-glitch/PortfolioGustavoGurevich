@@ -699,3 +699,212 @@ section{position:relative}
 /* ══════════════ v15 · sistema de identidade em pilha ══════════════ */
 .idsys{display:grid;gap:clamp(16px,2.2vw,30px)}
 .ids img{width:100%;height:auto;display:block;background:#F7F4EE}
+
+/* ══════════════ v16 · Camaleão: imagem em cima, escolha embaixo ══════════════ */
+#fach .fw{grid-template-columns:1fr;gap:clamp(24px,3.6vw,50px)}
+#fach .side{max-width:64ch}
+#fach .stagewrap{position:relative}
+#fach .stage{aspect-ratio:1400/1245;max-height:min(72vh,660px);margin-inline:auto;width:auto}
+#fach .stagewrap .picker{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);
+  margin-top:0;flex-direction:row}
+#fach .stagewrap .picker button{display:block;position:relative;text-align:left;
+  padding:clamp(16px,2vw,26px) clamp(12px,1.6vw,24px) clamp(16px,2vw,26px) 0;
+  border-bottom:1px solid var(--line);border-right:1px solid var(--line);transition:padding-left .45s var(--e)}
+#fach .stagewrap .picker button:last-child{border-right:0}
+#fach .stagewrap .picker button:not(:first-child){padding-left:clamp(12px,1.6vw,24px)}
+#fach .stagewrap .picker button:hover{padding-left:clamp(16px,2vw,30px)}
+#fach .stagewrap .picker .n{display:block;font-weight:500;font-size:10.5px;letter-spacing:.16em;color:var(--tx3)}
+#fach .stagewrap .picker .t{display:block;margin-top:7px;font-weight:700;
+  font-size:clamp(16px,1.9vw,29px);letter-spacing:-.022em;line-height:1.05}
+#fach .stagewrap .picker button[aria-pressed="true"] .t{color:var(--ac)}
+#fach .stagewrap .picker button[aria-pressed="true"] .n{color:var(--ac)}
+#fach .stagewrap .picker button::after{content:'';position:absolute;left:0;bottom:-1px;height:2px;width:0;
+  background:var(--ac);transition:width .7s var(--e)}
+#fach .stagewrap .picker button[aria-pressed="true"]::after{width:100%}
+/* ponto que pulsa, para mostrar que é clicável */
+#fach .picker .pd{position:absolute;right:clamp(10px,1.3vw,20px);top:clamp(17px,2.1vw,28px);
+  width:7px;height:7px;border-radius:99px;background:var(--ac);opacity:.9}
+#fach .picker .pd::after{content:'';position:absolute;inset:-1px;border-radius:99px;border:1.5px solid var(--ac);
+  animation:pdring 2.4s var(--e) infinite}
+#fach .picker button:nth-child(2) .pd::after{animation-delay:.4s}
+#fach .picker button:nth-child(3) .pd::after{animation-delay:.8s}
+@keyframes pdring{0%{transform:scale(.8);opacity:.9}65%{transform:scale(2.6);opacity:0}100%{opacity:0}}
+#fach .picker button[aria-pressed="true"] .pd::after{animation:none;opacity:0}
+#fach .stagewrap .hint{position:static;display:inline-flex;margin-top:clamp(14px,1.8vw,22px);
+  background:none;backdrop-filter:none;padding:0;color:var(--tx3);border-radius:0}
+@media (prefers-reduced-motion:reduce){#fach .picker .pd::after{animation:none}}
+@media(max-width:700px){
+  #fach .stagewrap .picker{grid-template-columns:1fr}
+  #fach .stagewrap .picker button{border-right:0;padding-left:0!important}
+  #fach .stagewrap .picker .t{font-size:19px}
+  #fach .stage{height:auto;aspect-ratio:1400/1245;max-height:44vh}
+}
+
+/* ══════════════ v16 · fecho da Morás ══════════════ */
+.mo-close{display:grid;justify-items:center;text-align:center;gap:clamp(22px,3vw,40px);
+  padding-block:clamp(46px,8vh,110px);border-top:1px solid var(--line);margin-top:clamp(30px,5vw,70px)}
+.mo-close .mo-mk{width:clamp(160px,19vw,268px);height:auto}
+.mo-close .mo-cl{margin:0;max-width:34ch;font-weight:400;
+  font-size:clamp(19px,2.3vw,36px);line-height:1.24;letter-spacing:-.024em}
+.mo-link{display:inline-grid;grid-template-columns:auto auto;align-items:baseline;gap:0 14px;
+  padding-bottom:10px;border-bottom:1px solid var(--line);transition:border-color .4s,gap .4s var(--e)}
+.mo-link .mo-lk{grid-column:1/-1;font-weight:500;font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.mo-link .mo-url{font-weight:600;font-size:clamp(17px,1.8vw,27px);letter-spacing:-.02em}
+.mo-link .mo-ar{font-size:clamp(15px,1.5vw,22px);transition:transform .4s var(--e)}
+.mo-link:hover{border-color:var(--ac);gap:0 20px}
+.mo-link:hover .mo-url,.mo-link:hover .mo-ar{color:var(--ac)}
+.mo-link:hover .mo-ar{transform:translate(3px,-3px)}
+
+/* ══════════════ v16 · links dentro da janela ══════════════ */
+.mdlk{display:grid;gap:9px;margin-top:clamp(18px,2.4vw,28px)}
+.mdlk a{display:flex;justify-content:space-between;align-items:center;gap:16px;
+  border:1px solid var(--line);border-radius:3px;padding:13px 16px;
+  font-weight:600;font-size:clamp(13px,1vw,15.5px);letter-spacing:-.01em;transition:.3s}
+.mdlk a i{font-style:normal;color:var(--tx3);transition:.3s}
+.mdlk a:hover{background:var(--ink);color:var(--w);border-color:var(--ink)}
+.mdlk a:hover i{color:var(--w)}
+
+/* v16 · única mudança no hero: a pista de rolagem com mais respiro (o resto volta ao v15) */
+#heroCue{gap:13px;letter-spacing:.18em}
+#heroTxt{padding-bottom:clamp(48px,7.5vh,78px)}
+
+/* v16 · ajuste: imagem e escolha com a mesma largura, sem o preto do estado ativo */
+#fach .stagewrap{max-width:min(100%,880px);margin-inline:auto}
+#fach .stagewrap .stage{width:100%;max-height:none;aspect-ratio:1400/1245}
+#fach .stagewrap .picker button[aria-pressed="true"]{background:transparent;color:inherit}
+#fach .stagewrap .picker button:hover{background:transparent}
+#fach .fw{gap:clamp(18px,2.6vw,34px)}
+#fach .side{margin-inline:auto;max-width:880px;width:100%}
+@media(max-width:700px){#fach .stagewrap .stage{max-height:46vh}}
+
+/* v16 · retrato na proporção real do arquivo, sem cortar as laterais */
+.me .pf{aspect-ratio:615/590}
+.me .pf img{object-position:50% 30%}
+@media(max-width:860px){.me .pf{max-width:100%}}
+
+
+/* v16 · o jornal da Morás na proporção real quando a tela é estreita (1700×692) */
+@media(max-width:860px){
+  .bleed.mo-paper{height:auto;aspect-ratio:1700/692}
+  .bleed.mo-paper img{height:auto;object-fit:contain}
+}
+
+/* v16 · nenhum controle nativo sobre os vídeos (o play grande do Safari/iOS) */
+video::-webkit-media-controls{display:none!important}
+video::-webkit-media-controls-enclosure{display:none!important}
+video::-webkit-media-controls-panel{display:none!important}
+video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+video::-moz-media-controls{display:none!important}
+#heroVid .vfb{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ══════════════ v17 · abas do estudo de marca viram chips ══════════════ */
+.st .tabs{gap:8px}
+.st .tabs button{font-weight:500;font-size:clamp(11.5px,.88vw,14px);letter-spacing:.01em;
+  text-transform:none;color:var(--tx2);padding:8px 16px;border:1px solid var(--line);border-radius:99px;
+  transition:background .35s var(--e),color .35s,border-color .35s}
+.st .tabs button::after{display:none}
+.st .tabs button:hover{border-color:var(--tx3);color:var(--tx)}
+.st .tabs button[aria-pressed="true"]{background:var(--ac);border-color:var(--ac);color:#fff}
+@media(max-width:640px){.st .tabs{gap:7px}.st .tabs button{padding:7px 13px;font-size:12px}}
+
+/* v17 · o que eu fiz em cada caso */
+.svc{margin-top:clamp(24px,3.2vw,46px)}
+.svc .lb{margin:0 0 clamp(11px,1.2vw,15px)}
+.svc ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:9px}
+.svc li{font-weight:500;font-size:clamp(11.5px,.88vw,14px);letter-spacing:.01em;
+  border:1px solid var(--line);border-radius:99px;padding:8px 16px;color:var(--tx2);
+  transition:border-color .35s,color .35s}
+.svc li:hover{border-color:var(--ac);color:var(--ac)}
+@media(max-width:640px){.svc ul{gap:7px}.svc li{padding:7px 13px;font-size:12px}}
+
+/* v17 · hero: menos scroll morto e uma segunda pista quando o vídeo abre */
+#heroWrap{height:172vh}
+@media(max-width:860px){#heroWrap{height:142vh}}
+#heroCue2{position:absolute;right:var(--g);bottom:clamp(18px,3vh,34px);z-index:6;
+  display:flex;align-items:center;gap:11px;opacity:0;pointer-events:none;
+  font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fff;
+  text-shadow:0 2px 20px rgba(0,0,0,.55);will-change:opacity}
+#heroCue2 .dot{width:6px;height:6px;border-radius:99px;background:#fff;animation:pulse 2.2s infinite}
+@media(max-width:640px){#heroCue2{right:auto;left:var(--g);bottom:calc(clamp(18px,3vh,34px) + 26px)}}
+
+/* v17 · render do Camaleão recortado mais perto do prédio */
+#fach .stage{aspect-ratio:1150/1245}
+#fach .stagewrap .stage{aspect-ratio:1150/1245}
+@media(max-width:860px){#fach .stage{aspect-ratio:1150/1245}}
+
+/* v17 · a segunda pista fica centrada embaixo, longe do botão do WhatsApp */
+#heroCue2{right:auto;left:50%;transform:translateX(-50%)}
+@media(max-width:860px){
+  #heroCue2{left:50%;right:auto;bottom:calc(clamp(18px,3vh,34px) + 46px)}
+}
+#heroCue2{bottom:clamp(26px,4.2vh,46px)}
+
+/* ══════════════ v18 · pista de rolagem abaixo da legenda do vídeo ══════════════ */
+#heroOver{align-items:flex-end}
+#heroOver .ov{display:flex;flex-direction:column;align-items:flex-start;gap:clamp(11px,1.4vw,16px)}
+#heroCue2{display:inline-flex;align-items:center;gap:10px;
+  background:rgba(14,14,13,.52);backdrop-filter:saturate(1.4) blur(10px);
+  border:1px solid rgba(252,251,249,.24);border-radius:999px;
+  padding:9px 15px 9px 17px;color:#fff;text-shadow:none;
+  font-weight:500;font-size:clamp(10px,.78vw,11.5px);letter-spacing:.16em;text-transform:uppercase}
+#heroCue2 .ar{font-size:13px;line-height:1;animation:cueDown 1.9s var(--e) infinite}
+@keyframes cueDown{0%,100%{transform:translateY(-2px);opacity:.55}50%{transform:translateY(3px);opacity:1}}
+@media (prefers-reduced-motion:reduce){#heroCue2 .ar{animation:none;opacity:1}}
+@media(max-width:640px){
+  #heroOver .ov{gap:10px}
+  #heroCue2{padding:8px 13px 8px 15px;letter-spacing:.13em;font-size:10px}
+}
+
+/* ══════════════ v18 · lâmina de luz nos chips do "o que eu fiz" ══════════════ */
+.svc li{position:relative;overflow:hidden}
+.svc li::before{content:'';position:absolute;top:-20%;bottom:-20%;left:0;width:42%;
+  background:linear-gradient(100deg,transparent 0%,var(--sh) 50%,transparent 100%);
+  transform:translateX(-240%) skewX(-16deg);opacity:0;pointer-events:none}
+.svc.go li::before{animation:svcSheen 1.05s var(--e) both}
+.svc.go li{animation:svcEdge 1.5s var(--e) both}
+@keyframes svcSheen{0%{transform:translateX(-240%) skewX(-16deg);opacity:0}
+  12%{opacity:1}88%{opacity:1}
+  100%{transform:translateX(340%) skewX(-16deg);opacity:0}}
+@keyframes svcEdge{0%,14%{border-color:var(--line);color:var(--tx2)}
+  46%{border-color:var(--ac);color:var(--ac)}
+  100%{border-color:var(--line);color:var(--tx2)}}
+.svc li:nth-child(1){animation-delay:.10s} .svc li:nth-child(1)::before{animation-delay:.10s}
+.svc li:nth-child(2){animation-delay:.19s} .svc li:nth-child(2)::before{animation-delay:.19s}
+.svc li:nth-child(3){animation-delay:.28s} .svc li:nth-child(3)::before{animation-delay:.28s}
+.svc li:nth-child(4){animation-delay:.37s} .svc li:nth-child(4)::before{animation-delay:.37s}
+.svc li:nth-child(5){animation-delay:.46s} .svc li:nth-child(5)::before{animation-delay:.46s}
+.svc li:nth-child(6){animation-delay:.55s} .svc li:nth-child(6)::before{animation-delay:.55s}
+.svc li:nth-child(7){animation-delay:.64s} .svc li:nth-child(7)::before{animation-delay:.64s}
+.svc li:nth-child(8){animation-delay:.73s} .svc li:nth-child(8)::before{animation-delay:.73s}
+.svc li:nth-child(9){animation-delay:.82s} .svc li:nth-child(9)::before{animation-delay:.82s}
+.svc li:hover::before{animation:svcSheen2 .85s var(--e) both;animation-delay:0s}
+@keyframes svcSheen2{0%{transform:translateX(-240%) skewX(-16deg);opacity:0}
+  12%{opacity:1}88%{opacity:1}
+  100%{transform:translateX(340%) skewX(-16deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.svc li::before{display:none}.svc.go li{animation:none}}
+/* a cor da lâmina segue o capítulo */
+:root{--sh:rgba(62,124,166,.45)}
+.mo-w{--sh:rgba(180,80,30,.48)}
+#barzel{--ac:#E51E37;--sh:rgba(229,30,55,.52)}
+#barzel .svc li{color:var(--tx2)}
+
+/* ══════════════ v18 · Camaleão de borda a borda ══════════════ */
+#fach .stagewrap{max-width:none;width:auto;margin-inline:calc(var(--g) * -1)}
+#fach .stagewrap .stage{width:100%;max-height:none;margin-inline:0}
+#fach .stagewrap .picker{padding-inline:var(--g)}
+#fach .stagewrap .hint{padding-inline:var(--g)}
+@media(min-width:861px){
+  #fach .stagewrap .stage{aspect-ratio:auto;height:min(86vh,880px)}
+  #fach .stagewrap .stage img{object-fit:cover;object-position:50% 16%}
+}
+@media(max-width:860px){
+  #fach .stagewrap .stage{aspect-ratio:1150/1245;height:auto;max-height:none}
+  #fach .stagewrap .stage img{object-fit:cover;object-position:50% 50%}
+}
+/* v18 · a pista deixa de ser flutuante: entra na coluna, abaixo da legenda */
+#heroCue2{position:static;left:auto;right:auto;bottom:auto;transform:none;opacity:1;
+  will-change:auto;pointer-events:none;align-self:flex-start}
+/* v18 · o render inteiro, sem corte, em qualquer largura */
+#fach .stagewrap .stage{aspect-ratio:1150/1245;height:auto;max-height:none}
+#fach .stagewrap .stage img{object-fit:cover;object-position:50% 50%}

@@ -2,7 +2,7 @@
   --w:#FCFBF9; --w2:#F3F1ED; --ink:#0E0E0D; --ink2:#1A1A18;
   --tx:#141413; --tx2:#6E6B66; --tx3:#9C9891;
   --line:rgba(20,20,19,.13); --line-d:rgba(252,251,249,.16);
-  --ac:#B4501E;
+  --ac:#3E7CA6;
   --hd:64px;
   --g:clamp(20px,4.2vw,80px);
   --e:cubic-bezier(.22,1,.36,1);
@@ -104,7 +104,7 @@ section{position:relative}
 #desc .say{position:absolute;left:var(--g);right:var(--g);z-index:4;color:var(--w);max-width:13ch;
   font-weight:800;font-size:clamp(36px,7.2vw,132px);line-height:.94;letter-spacing:-.036em;
   will-change:opacity,transform;text-shadow:0 4px 50px rgba(14,14,13,.7)}
-#desc .say em{font-style:normal;color:#E8A97C}
+#desc .say em{font-style:normal;color:#7FB4D4}
 #desc .fl{position:absolute;right:var(--g);top:50%;transform:translateY(-50%);z-index:4;color:var(--w);
   text-align:right;display:flex;flex-direction:column;gap:clamp(12px,1.6vw,24px)}
 #desc .fl div{opacity:0;transform:translateX(14px);transition:opacity .7s var(--e),transform .7s var(--e)}
@@ -519,7 +519,7 @@ section{position:relative}
     radial-gradient(105% 78% at 76% 12%, rgba(255,168,96,.24), transparent 60%),
     radial-gradient(120% 108% at 2% 106%, rgba(38,44,24,.88), transparent 62%),
     linear-gradient(168deg, rgba(58,21,5,.62) 0%, rgba(81,29,5,.44) 42%, rgba(30,32,18,.80) 100%),
-    url(mo-corten.jpg);
+    url(imagens/mo-corten.jpg);
   background-size:auto,auto,auto,clamp(420px,46vw,760px);
   background-repeat:no-repeat,no-repeat,no-repeat,repeat;
   background-blend-mode:screen,multiply,normal,normal;
@@ -819,8 +819,8 @@ video::-moz-media-controls{display:none!important}
 @media(max-width:640px){.svc ul{gap:7px}.svc li{padding:7px 13px;font-size:12px}}
 
 /* v17 · hero: menos scroll morto e uma segunda pista quando o vídeo abre */
-#heroWrap{height:172vh}
-@media(max-width:860px){#heroWrap{height:142vh}}
+#heroWrap{height:190vh}
+@media(max-width:860px){#heroWrap{height:168vh}}
 #heroCue2{position:absolute;right:var(--g);bottom:clamp(18px,3vh,34px);z-index:6;
   display:flex;align-items:center;gap:11px;opacity:0;pointer-events:none;
   font-weight:500;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#fff;
@@ -908,3 +908,114 @@ video::-moz-media-controls{display:none!important}
 /* v18 · o render inteiro, sem corte, em qualquer largura */
 #fach .stagewrap .stage{aspect-ratio:1150/1245;height:auto;max-height:none}
 #fach .stagewrap .stage img{object-fit:cover;object-position:50% 50%}
+
+/* ══════════════ v19 · Camaleão: imagem inteira + estados na lateral (desktop) ══════════════ */
+@media(min-width:861px){
+  #fach .wrap.fw{padding-inline:var(--g)}
+  #fach .stagewrap{margin-inline:0;max-width:none;width:auto;
+    display:grid;grid-template-columns:auto 1fr;align-items:center;
+    gap:clamp(28px,4vw,70px)}
+  #fach .stagewrap .stage{
+    height:min(82vh,840px);
+    width:calc(min(82vh,840px) * 1150 / 1245);
+    aspect-ratio:auto;max-height:none;margin-inline:0}
+  #fach .stagewrap .stage img{object-fit:cover;object-position:50% 50%}
+  /* os três estados empilhados ao lado da imagem */
+  #fach .stagewrap .picker{grid-template-columns:1fr;border-top:0;
+    align-content:center;padding-inline:0;align-self:center}
+  #fach .stagewrap .picker button{border-right:0;border-bottom:1px solid var(--line);
+    padding:clamp(18px,2.2vw,30px) clamp(14px,1.6vw,22px) clamp(18px,2.2vw,30px) 0}
+  #fach .stagewrap .picker button:first-child{border-top:1px solid var(--line)}
+  #fach .stagewrap .picker button:not(:first-child){padding-left:0}
+  #fach .stagewrap .picker button:hover{padding-left:clamp(8px,1vw,16px)}
+  #fach .stagewrap .picker .t{font-size:clamp(20px,2.2vw,34px)}
+  #fach .picker .pd{right:clamp(4px,.6vw,10px);top:clamp(19px,2.3vw,31px)}
+  #fach .stagewrap .hint{padding-inline:0;margin-top:clamp(16px,2vw,24px);
+    grid-column:2;justify-self:start}
+}
+/* v19 · estados e dica agrupados e centrados ao lado da imagem */
+@media(min-width:861px){
+  #fach .stagewrap{grid-template-rows:1fr auto auto 1fr;align-items:start}
+  #fach .stagewrap .stage{grid-column:1;grid-row:1 / -1;align-self:center}
+  #fach .stagewrap .picker{grid-column:2;grid-row:2;align-self:end}
+  #fach .stagewrap .hint{grid-column:2;grid-row:3;align-self:start;justify-self:start;margin-top:clamp(14px,1.6vw,20px)}
+}
+
+/* ══════════════ v20 · los tres bloques + abrir/cerrar el caso ══════════════ */
+#work .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(14px,1.6vw,26px)}
+#work .card{display:block;width:100%;text-align:left;padding:0;position:relative;
+  border:1px solid var(--line);border-radius:clamp(13px,1.1vw,18px);overflow:hidden;background:var(--w);
+  transition:transform .8s var(--e),box-shadow .8s var(--e),border-color .6s var(--e)}
+#work .card:hover,#work .card:focus-visible{transform:translateY(-7px);
+  box-shadow:0 28px 72px rgba(14,14,13,.14);border-color:rgba(20,20,19,.04)}
+#work .card .cim{display:block;position:relative;aspect-ratio:1/1;overflow:hidden;background:var(--w2)}
+#work .card .cim img{width:100%;height:100%;object-fit:cover;transform:scale(var(--z,1));transition:transform 1.6s var(--e)}
+#work .card:hover .cim img{transform:scale(calc(var(--z,1) * 1.055))}
+/* la marca de Barzel entera, sin recorte */
+#work .card[data-cli="barzel"] .cim img{object-fit:contain;padding:clamp(22px,2.4vw,40px);background:#fff}
+#work .card .cim::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--cc);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .9s var(--e)}
+#work .card:hover .cim::after,#work .card[aria-expanded="true"] .cim::after{transform:scaleX(1)}
+#work .card .cft{display:block;padding:clamp(18px,1.6vw,26px) clamp(18px,1.6vw,26px) clamp(20px,1.8vw,28px)}
+#work .cno{display:block;font-weight:600;font-size:11px;letter-spacing:.14em;color:var(--cc)}
+#work .cti{display:block;margin-top:clamp(8px,.9vw,14px);font-weight:800;
+  font-size:clamp(23px,1.95vw,36px);line-height:1.02;letter-spacing:-.032em}
+#work .ckd{display:block;margin-top:clamp(9px,.8vw,13px);font-weight:500;
+  font-size:clamp(10px,.72vw,11.5px);letter-spacing:.12em;text-transform:uppercase;color:var(--tx2);line-height:1.5}
+/* el botón: una pastilla que se ve clicable sin tener que pasar el ratón */
+#work .cgo{position:relative;display:inline-flex;align-items:center;gap:9px;
+  margin-top:clamp(18px,1.7vw,26px);padding:11px 19px 11px 13px;border-radius:999px;
+  border:1px solid var(--cc);color:var(--cc);background:transparent;
+  font-weight:600;font-size:11px;letter-spacing:.13em;text-transform:uppercase;
+  transition:background .45s var(--e),color .45s var(--e),border-color .45s var(--e)}
+#work .cgo::after{content:'';position:absolute;inset:-1px;border-radius:999px;
+  border:1px solid var(--cc);opacity:0;pointer-events:none;animation:cgoPulse 2.8s var(--e) infinite}
+@keyframes cgoPulse{
+  0%{transform:scale(1);opacity:.5}
+  70%{transform:scale(1.14);opacity:0}
+  100%{transform:scale(1.14);opacity:0}}
+#work .card:nth-child(2) .cgo::after{animation-delay:.5s}
+#work .card:nth-child(3) .cgo::after{animation-delay:1s}
+#work .card:hover .cgo,#work .card:focus-visible .cgo,#work .card[aria-expanded="true"] .cgo{
+  background:var(--cc);color:#FCFBF9;border-color:var(--cc)}
+#work .card:hover .cgo::after,#work .card[aria-expanded="true"] .cgo::after{animation:none;opacity:0}
+#work .cgo em{font-style:normal}
+#work .cgoi{position:relative;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;flex:0 0 auto}
+#work .cgoi::before,#work .cgoi::after{content:'';position:absolute;left:50%;top:50%;background:currentColor}
+#work .cgoi::before{width:7px;height:1px;transform:translate(-50%,-50%)}
+#work .cgoi::after{width:1px;height:7px;transform:translate(-50%,-50%);transition:transform .55s var(--e)}
+#work .card[aria-expanded="true"] .cgoi::after{transform:translate(-50%,-50%) scaleY(0)}
+@media(max-width:860px){
+  #work .cards{grid-template-columns:1fr;gap:13px}
+  #work .card .cim{aspect-ratio:1/1}
+  #work .card:hover{transform:none;box-shadow:none}
+}
+
+/* el capítulo del cliente: cerrado por defecto */
+.cli{display:none}
+.cli.open{display:block}
+
+/* el botón de cerrar: fijo, siempre a la vista */
+#cliBar{position:fixed;z-index:88;bottom:clamp(16px,3vh,30px);left:var(--g);
+  opacity:0;pointer-events:none;transform:translateY(16px);
+  transition:opacity .45s var(--e),transform .45s var(--e)}
+#cliBar.on{opacity:1;pointer-events:auto;transform:translateY(0)}
+#cliClose{display:flex;align-items:center;gap:11px;padding:13px 22px 13px 16px;border-radius:999px;
+  background:rgba(14,14,13,.93);color:#FCFBF9;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  box-shadow:0 16px 46px rgba(14,14,13,.3);
+  font-weight:500;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;
+  transition:background .4s var(--e)}
+#cliClose:hover{background:#000}
+#cliClose i{position:relative;width:18px;height:18px;border-radius:50%;border:1px solid currentColor;flex:0 0 auto}
+#cliClose i::before,#cliClose i::after{content:'';position:absolute;left:50%;top:50%;width:8px;height:1px;background:currentColor}
+#cliClose i::before{transform:translate(-50%,-50%) rotate(45deg)}
+#cliClose i::after{transform:translate(-50%,-50%) rotate(-45deg)}
+@media(max-width:860px){
+  #cliBar{bottom:clamp(14px,2.4vh,22px)}
+  #cliClose{padding:12px 18px 12px 14px;font-size:10.5px;gap:9px}
+}
+@media (prefers-reduced-motion:reduce){
+  #work .card,#work .card .cim img,#work .cgoi::after,#cliBar,#work .cgo{transition:none}
+  #work .cgo::after{animation:none;opacity:0}
+}

@@ -165,13 +165,13 @@ stg.addEventListener('click',function(){ goF(fi+1); });
 /* ── modal ── */
 var md=$('#md'), mdKey='cert';
 var DOC={
- cert:{t:'Certified Digital Marketing Professional',k:{es:'Credencial',en:'Credential',pt:'Credencial'},img:'doc-cert.jpg',
+ cert:{t:'Certified Digital Marketing Professional',k:{es:'Credencial',en:'Credential',pt:'Credencial'},img:'imagens/doc-cert.jpg',
    rows:[['Digital Marketing Institute','—'],
          [{es:'N.º de graduado',en:'Graduate No.',pt:'N.º de formado'},'BR-OPM275884'],
          [{es:'Temario',en:'Syllabus',pt:'Ementa'},'Version 9.0'],
          [{es:'Fecha',en:'Date',pt:'Data'},'01 · 12 · 2024']]},
  diploma:{t:{es:'Comunicación Social — Publicidad y Propaganda',en:'Social Communication — Advertising',pt:'Comunicação Social — Publicidade e Propaganda'},
-   k:{es:'Diploma',en:'Degree',pt:'Diploma'},img:'doc-diploma.jpg',
+   k:{es:'Diploma',en:'Degree',pt:'Diploma'},img:'imagens/doc-diploma.jpg',
    rows:[['ESPM','São Paulo'],
          [{es:'Grado',en:'Degree',pt:'Grau'},{es:'Bachiller',en:'Bachelor',pt:'Bacharel'}],
          [{es:'Carga horaria',en:'Class hours',pt:'Carga horária'},'3.564'],
@@ -225,6 +225,56 @@ $('#menu .cl').addEventListener('click',function(){ mOpen(false); });
 $$('#menu a').forEach(function(a){ a.addEventListener('click',function(){ mOpen(false); }); });
 addEventListener('keydown',function(e){ if(e.key==='Escape'&&menu.classList.contains('on')) mOpen(false); });
 
+/* ── v20 · los tres casos: abrir y cerrar ── */
+var cliBar=$('#cliBar'), cliBtn=$('#cliClose'), cliCards=$$('#work .card'), cliCur=null, cliT=null;
+function relayout(){ try{ dispatchEvent(new Event('resize')); }catch(_){} }
+function cliMark(k){
+  $$('.cli').forEach(function(c){ c.classList.toggle('open', c.id==='cli-'+k); });
+  cliCards.forEach(function(b){ b.setAttribute('aria-expanded', String(b.dataset.cli===k)); });
+  cliCur=k||null;
+}
+function openCli(k,noScroll){
+  if(!document.getElementById('cli-'+k)) return;
+  cliMark(k);
+  if(cliT) clearTimeout(cliT);
+  cliBar.hidden=false;
+  requestAnimationFrame(function(){ cliBar.classList.add('on'); });
+  relayout();
+  if(!noScroll){
+    var el=document.getElementById('cli-'+k);
+    scrollTo({top:Math.max(0,el.getBoundingClientRect().top+scrollY-54),behavior:RM?'auto':'smooth'});
+  }
+}
+function closeCli(){
+  if(!cliCur) return;
+  var card=$('#work .card[data-cli="'+cliCur+'"]');
+  cliMark(null);
+  cliBar.classList.remove('on');
+  if(cliT) clearTimeout(cliT);
+  cliT=setTimeout(function(){ if(!cliCur) cliBar.hidden=true; },480);
+  relayout();
+  if(card) scrollTo({top:Math.max(0,card.getBoundingClientRect().top+scrollY-110),behavior:RM?'auto':'smooth'});
+}
+cliCards.forEach(function(b){ b.addEventListener('click',function(){
+  if(cliCur===b.dataset.cli) closeCli(); else openCli(b.dataset.cli); }); });
+if(cliBtn) cliBtn.addEventListener('click',closeCli);
+addEventListener('keydown',function(e){ if(e.key==='Escape' && cliCur && md.hidden && !menu.classList.contains('on')) closeCli(); });
+/* cualquier enlace que apunte dentro de un caso lo abre antes */
+$$('a[href^="#"]').forEach(function(a){
+  var id=a.getAttribute('href').slice(1); if(!id) return;
+  var t=document.getElementById(id); if(!t) return;
+  var w=t.classList.contains('cli')?t:(t.closest?t.closest('.cli'):null); if(!w) return;
+  var host=w.id.replace('cli-','');
+  a.addEventListener('click',function(e){ if(cliCur!==host){ e.preventDefault(); openCli(host); } });
+});
+/* enlace directo: /#moras */
+(function(){ var h=(location.hash||'').slice(1); if(!h) return;
+  var t=document.getElementById(h); if(!t) return;
+  var w=t.closest?t.closest('.cli'):null; if(!w) return;
+  openCli(w.id.replace('cli-',''),true);
+  setTimeout(function(){ t.scrollIntoView(); },80);
+})();
+
 /* ── scroll engine ── */
 var hd=$('#hd'), pgb=$('#pg'), navA=$$('#hd nav a[href^="#"]'),
     tg=navA.map(function(a){ return $(a.getAttribute('href')); }),
@@ -233,6 +283,9 @@ var hd=$('#hd'), pgb=$('#pg'), navA=$$('#hd nav a[href^="#"]'),
     desc=$('#desc'), sh=$('#desc .sh'), says=$$('#desc .say'), fls=$$('#desc .fl div');
 function pv(el){ var r=el.getBoundingClientRect(); return cl((-r.top)/((el.offsetHeight-innerHeight)||1),0,1); }
 function ease(t){ return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
+/* v20 · curva más suave, sólo para la apertura */
+function easeHero(t){ return -(Math.cos(Math.PI*t)-1)/2; }
+var hp=0, hpOn=false, hLast=0, hPaint=-1;
 
 var _gap=null;
 function heroGap(){
@@ -247,10 +300,16 @@ function heroGap(){
   _gap={t:top,h:h};
   return _gap;
 }
-addEventListener('resize',function(){ _gap=null; },{passive:true});
-addEventListener('orientationchange',function(){ _gap=null; });
+/* v20 · en el móvil la barra del navegador dispara resize todo el rato;
+   sólo rehacemos la cuenta si la pantalla cambió de verdad */
+var _vw=innerWidth, _vh=innerHeight;
+addEventListener('resize',function(){
+  if(innerWidth!==_vw || Math.abs(innerHeight-_vh)>120){ _vw=innerWidth; _vh=innerHeight; _gap=null; }
+},{passive:true});
+addEventListener('orientationchange',function(){ _vw=innerWidth; _vh=innerHeight; _gap=null; });
 
-function tick(){
+function tick(ts){
+  var now=ts||performance.now(), dt=hLast?Math.min(64,now-hLast):16; hLast=now;
   var y=scrollY,H=innerHeight,doc=document.documentElement.scrollHeight-H;
   pgb.style.transform='scaleX('+cl(y/doc,0,1)+')';
 
@@ -263,12 +322,18 @@ function tick(){
   hd.classList.toggle('on-dark',d);
 
   var mid=y+H*.42, act=-1;
-  for(var k=0;k<tg.length;k++){ if(tg[k] && tg[k].offsetTop-80<=mid) act=k; }
+  for(var k=0;k<tg.length;k++){ if(tg[k] && tg[k].offsetHeight && tg[k].offsetTop-80<=mid) act=k; }
   navA.forEach(function(a,i){ a.classList.toggle('act',i===act); });
 
-  /* HERO expand */
+  /* HERO expand — v20: el vídeo persigue el scroll en vez de pegarse a él */
   if(hr.top<H && hr.bottom>0){
-    var p=ease(cl(pv(heroWrap)/.86,0,1));
+    var raw=cl(pv(heroWrap)/.86,0,1);
+    if(!hpOn){ hp=raw; hpOn=true; }
+    if(RM) hp=raw;
+    else { hp += (raw-hp)*(1-Math.exp(-dt/(innerWidth<860?115:88)));
+           if(Math.abs(raw-hp)<.0004) hp=raw; }
+    var p=easeHero(hp), pq=Math.round(p*2400);
+    if(pq!==hPaint){ hPaint=pq;
     var mob=innerWidth<860;
     if(mob){
       /* no celular o vídeo ocupa exatamente a folga entre o texto de cima e os dados de baixo */
@@ -292,7 +357,8 @@ function tick(){
     heroTxt.style.transform='translateY('+(-p*26).toFixed(1)+'px)';
     heroCue.style.opacity=cl(1-p*3,0,1);
     heroOver.style.opacity=cl((p-.6)/.3,0,1);
-  }
+    }
+  } else { hpOn=false; }
 
   /* descent */
   var dr=desc.getBoundingClientRect();
